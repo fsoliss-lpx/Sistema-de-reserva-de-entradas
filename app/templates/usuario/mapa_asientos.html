@@ -66,14 +66,40 @@
 
     <script>
         function seleccionarAsiento(id, numero, estado) {
+            // Si el asiento no está verde, no hacemos nada
             if (estado !== 'DISPONIBLE') {
                 alert('Este asiento ya no está disponible.');
                 return;
             }
             
-            // Aquí conectaremos el Control Optimista en el Sprint 5
             if (confirm('¿Deseas intentar reservar el asiento ' + numero + '?')) {
-                alert('¡Listo para conectar la API de reserva! ID del asiento: ' + id);
+                // Hacemos la petición POST asíncrona a nuestra nueva API
+                fetch('/api/reservar/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id_asiento: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Si ganamos la carrera, mostramos el éxito
+                        alert(data.message);
+                        
+                        // Recargamos la página para que el asiento se pinte de Naranja (Reservado)
+                        // En el Sprint 6 cambiaremos esto para que redirija a la pantalla de Pago
+                        window.location.reload(); 
+                    } else {
+                        // Si alguien más nos ganó el asiento (Condición de Carrera - Error 409)
+                        alert("Error: " + data.message);
+                        window.location.reload(); // Recargamos para actualizar los colores reales
+                    }
+                })
+                .catch(error => {
+                    console.error("Error en la solicitud:", error);
+                    alert("Ocurrió un error de conexión al intentar reservar.");
+                });
             }
         }
     </script>

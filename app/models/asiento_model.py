@@ -1,11 +1,9 @@
-# app/models/asiento_model.py
 import pymysql
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Función de conexión local (para no romper la arquitectura actual)
 def get_db_connection():
     return pymysql.connect(
         host=os.getenv('DB_HOST', 'localhost'),
@@ -21,12 +19,26 @@ class AsientoModel:
         conexion = get_db_connection()
         try:
             with conexion.cursor() as cursor:
-                # Traemos todos los asientos ordenados por su número
                 sql = "SELECT * FROM asientos WHERE id_evento = %s ORDER BY numero_asiento"
                 cursor.execute(sql, (id_evento,))
                 return cursor.fetchall()
         except Exception as e:
             print(f"Error al obtener asientos: {e}")
             return []
+        finally:
+            conexion.close()
+
+    # --- AQUÍ ESTÁ LA NUEVA FUNCIÓN ---
+    @staticmethod
+    def obtener_por_id(id_asiento):
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = "SELECT * FROM asientos WHERE id_asiento = %s"
+                cursor.execute(sql, (id_asiento,))
+                return cursor.fetchone()
+        except Exception as e:
+            print(f"Error al obtener asiento por ID: {e}")
+            return None
         finally:
             conexion.close()
