@@ -1,0 +1,128 @@
+/* app/static/css/auth.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0d0e15; /* Fondo oscuro del diseño */
+    background-image: url('https://images.unsplash.com/photo-1540039155732-68746868d22c?q=80&w=1920&auto=format&fit=crop'); /* Imagen temporal de concierto */
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.auth-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    color: #1a1a2e;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.auth-logo i {
+    color: #7b2cbf; /* Morado del diseño */
+    font-size: 28px;
+}
+
+.auth-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px 12px 40px; /* Espacio para el ícono */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #7b2cbf;
+    background-color: #fff;
+}
+
+.input-icon-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #7b2cbf; /* Botón morado */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #5a189a;
+}
+
+.auth-links {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.auth-links a {
+    color: #7b2cbf;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+/* Alertas dinámicas de Flask */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+.alert-danger { background-color: #ffeaea; color: #d32f2f; border: 1px solid #ffcdd2; }
+.alert-success { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
