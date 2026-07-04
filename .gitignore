@@ -1,6 +1,7 @@
 # Entornos virtuales
 venv/
 env/
+/.venv/
 
 # Variables de entorno (¡Nunca subir a GitHub!)
 .env
@@ -8,6 +9,28 @@ env/
 # Archivos compilados de Python
 __pycache__/
 *.pyc
+*.py[cod]
+*$py.class
 
 # Configuraciones del editor
 .vscode/
+.idea/
+
+# Cachés y artefactos
+.pytest_cache/
+coverage/
+dist/
+build/
+
+# Bases de datos y logs
+*.sqlite3
+*.db
+*.log
+
+# Node
+node_modules/
+
+# Sistema y editor
+.DS_Store
+Thumbs.db
+desktop.ini

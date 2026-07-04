@@ -30,4 +30,8 @@ def create_app():
     from app.views.user_dashboard import user_bp
     app.register_blueprint(user_bp)
 
+    # Registrar la API de Reservas
+    from app.controllers.reservas_api import reservas_bp
+    app.register_blueprint(reservas_bp)
+
     return app
