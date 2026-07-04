@@ -1,0 +1,13 @@
+# Entornos virtuales
+venv/
+env/
+
+# Variables de entorno (¡Nunca subir a GitHub!)
+.env
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Configuraciones del editor
+.vscode/
