@@ -1,0 +1,116 @@
+<!-- app/templates/usuario/historial.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Reservas - UNEMI Conciertos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { display: flex; background-color: #f4f6f9; min-height: 100vh; }
+        
+        /* Menú Lateral */
+        .sidebar { width: 250px; background-color: #1a1a2e; color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 20px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #2d2d44; }
+        .sidebar-header i { color: #7b2cbf; }
+        .nav-menu { list-style: none; padding: 20px 0; flex-grow: 1; }
+        .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: #a0a0b5; text-decoration: none; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { background-color: #7b2cbf; color: white; border-radius: 0 25px 25px 0; margin-right: 20px; }
+        
+        /* Contenido Principal */
+        .main-content { flex-grow: 1; padding: 40px; }
+        .header h1 { font-size: 28px; color: #333; margin-bottom: 20px; }
+        
+        /* Tabla de Historial */
+        .table-container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { color: #666; font-weight: bold; font-size: 14px; text-transform: uppercase; }
+        td { color: #333; font-size: 15px; }
+        
+        /* Badges de Estado */
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-success { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-danger { background-color: #ffeaea; color: #d32f2f; }
+        .badge-warning { background-color: #fff3e0; color: #ef6c00; }
+        
+        .btn-ticket { background-color: #7b2cbf; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; transition: 0.3s; display: inline-block; }
+        .btn-ticket:hover { background-color: #5a189a; }
+    </style>
+</head>
+<body>
+
+    <!-- Menú Lateral -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-ticket"></i> CONCIERTOS
+        </div>
+        <ul class="nav-menu">
+            <a href="/dashboard" class="nav-item"><i class="fa-solid fa-house"></i> Inicio</a>
+            <a href="/dashboard" class="nav-item"><i class="fa-regular fa-calendar"></i> Eventos</a>
+            <a href="/dashboard/historial" class="nav-item active"><i class="fa-solid fa-clock-rotate-left"></i> Historial y Reservas</a>
+            <a href="/dashboard/perfil" class="nav-item"><i class="fa-regular fa-user"></i> Perfil</a>
+        </ul>
+        <a href="{{ url_for('auth.logout') }}" class="nav-item" style="margin-bottom: 20px; color: #ff4d4d;">
+            <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+        </a>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <header class="header">
+            <h1>Mis Reservas e Historial</h1>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Evento</th>
+                        <th>Asiento</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in historial %}
+                    <tr>
+                        <td>{{ item.fecha_reserva.strftime('%d-%m-%Y %H:%M') }}</td>
+                        <td><strong>{{ item.nombre_evento }}</strong></td>
+                        <td>{{ item.numero_asiento }}</td>
+                        <td>${{ "%.2f"|format(item.monto if item.monto else 0) }}</td>
+                        <td>
+                            {% if item.estado_reserva == 'CONFIRMADA' %}
+                                <span class="badge badge-success"><i class="fa-solid fa-check"></i> Confirmada</span>
+                            {% elif item.estado_reserva == 'CANCELADA' or item.estado_reserva == 'EXPIRADA' %}
+                                <span class="badge badge-danger"><i class="fa-solid fa-xmark"></i> {{ item.estado_reserva.capitalize() }}</span>
+                            {% else %}
+                                <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.estado_reserva == 'CONFIRMADA' %}
+                            <a href="/dashboard/comprobante/{{ item.id_reserva }}" class="btn-ticket"><i class="fa-solid fa-file-invoice"></i> Ver Ticket</a>
+                            {% else %}
+                            <span style="color: #aaa; font-size: 13px;">No disponible</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
+                            <i class="fa-solid fa-folder-open" style="font-size: 30px; margin-bottom: 10px; color: #ddd;"></i><br>
+                            Aún no tienes reservas en tu historial.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>

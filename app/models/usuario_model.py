@@ -36,3 +36,38 @@ class UsuarioModel:
                 return None
         finally:
             conexion.close()
+
+    @staticmethod
+    def actualizar_contrasena(id_usuario, contrasena_actual, nueva_contrasena):
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                # 1. Obtener el hash actual
+                cursor.execute("SELECT contrasena_hash FROM usuarios WHERE id_usuario = %s", (id_usuario,))
+                usuario = cursor.fetchone()
+                
+                # 2. Verificar que la contraseña actual sea correcta
+                if usuario and check_password_hash(usuario['contrasena_hash'], contrasena_actual):
+                    # 3. Hashear la nueva y actualizar
+                    nuevo_hash = generate_password_hash(nueva_contrasena)
+                    cursor.execute("UPDATE usuarios SET contrasena_hash = %s WHERE id_usuario = %s", 
+                                   (nuevo_hash, id_usuario))
+                    conexion.commit()
+                    return True, "Contraseña actualizada exitosamente."
+                return False, "La contraseña actual es incorrecta."
+        except Exception as e:
+            print(f"Error: {e}")
+            return False, "Error al actualizar la contraseña."
+        finally:
+            conexion.close()
+
+    @staticmethod
+    def obtener_datos_usuario(id_usuario):
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = "SELECT nombre_completo, correo_electronico FROM usuarios WHERE id_usuario = %s"
+                cursor.execute(sql, (id_usuario,))
+                return cursor.fetchone()
+        finally:
+            conexion.close()

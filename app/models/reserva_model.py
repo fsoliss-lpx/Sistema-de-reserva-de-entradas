@@ -77,3 +77,28 @@ class ReservaModel:
             print(f"Error en el Daemon de limpieza: {e}")
         finally:
             conexion.close()
+
+    @staticmethod
+    def obtener_historial_usuario(id_usuario):
+        """Obtiene todas las reservas y pagos de un usuario específico."""
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = """
+                    SELECT r.id_reserva, r.fecha_reserva, r.estado as estado_reserva,
+                           a.numero_asiento, e.nombre_evento, e.fecha_hora, e.lugar,
+                           p.monto, p.estado as estado_pago
+                    FROM reservas r
+                    JOIN asientos a ON r.id_asiento = a.id_asiento
+                    JOIN eventos e ON a.id_evento = e.id_evento
+                    LEFT JOIN pagos p ON r.id_reserva = p.id_reserva
+                    WHERE r.id_usuario = %s
+                    ORDER BY r.fecha_reserva DESC
+                """
+                cursor.execute(sql, (id_usuario,))
+                return cursor.fetchall()
+        except Exception as e:
+            print(f"Error al obtener historial: {e}")
+            return []
+        finally:
+            conexion.close()

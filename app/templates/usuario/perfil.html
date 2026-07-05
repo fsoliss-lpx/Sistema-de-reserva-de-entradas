@@ -1,0 +1,59 @@
+<!-- app/templates/usuario/perfil.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil - UNEMI Conciertos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #0d0e15; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; padding: 40px; }
+        .profile-container { background: #1a1a2e; padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { text-align: center; margin-bottom: 25px; color: #7b2cbf; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #a0a0b5; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #2d2d44; background: #0d0e15; color: white; }
+        .btn-update { width: 100%; padding: 12px; background-color: #7b2cbf; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-update:hover { background-color: #5a189a; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 6px; text-align: center; font-size: 14px; }
+        .alert-success { background: #1e4620; color: #a8d5ba; }
+        .alert-danger { background: #5d1b1b; color: #f5a9a9; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #a0a0b5; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <h2><i class="fa-solid fa-user-gear"></i> Mi Perfil</h2>
+        
+        <!-- Agrega esto justo debajo del h2 -->
+        <div style="margin-bottom: 25px; color: #a0a0b5; font-size: 14px;">
+            <p><strong>Nombre:</strong> {{ usuario.nombre_completo }}</p>
+            <p><strong>Correo:</strong> {{ usuario.correo_electronico }}</p>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #2d2d44; margin-bottom: 25px;">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('user.cambiar_password') }}" method="POST">
+            <div class="form-group">
+                <label>Contraseña Actual</label>
+                <input type="password" name="actual" required>
+            </div>
+            <div class="form-group">
+                <label>Nueva Contraseña</label>
+                <input type="password" name="nueva" required>
+            </div>
+            <button type="submit" class="btn-update">Actualizar Contraseña</button>
+        </form>
+
+        <a href="/dashboard" class="back-link"><i class="fa-solid fa-arrow-left"></i> Volver al inicio</a>
+    </div>
+
+</body>
+</html>
