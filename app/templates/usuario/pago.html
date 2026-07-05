@@ -4,41 +4,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasarela de Pago - UNEMI Conciertos</title>
+    <title>Pago - UNEMI Conciertos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { min-height: 100vh; background: #0d0e15; color: #e2e8f0; display: flex; justify-content: center; align-items: center; padding: 28px; }
-        .payment-card { width: 100%; max-width: 520px; background: #111827; border: 1px solid rgba(255,255,255,0.05); border-radius: 28px; padding: 32px; }
-        .payment-card h2 { color: #f8fafc; margin-bottom: 20px; }
-        .summary-box { background: #0f172a; border: 1px solid rgba(255,255,255,0.06); border-radius: 22px; padding: 24px; }
-        .summary-box h3 { color: #c7d2fe; margin-bottom: 16px; }
-        .summary-item { display: flex; justify-content: space-between; margin-bottom: 14px; color: #cbd5e1; }
-        .summary-item strong { color: #f8fafc; }
-        .total-price { font-size: 26px; font-weight: 800; color: #22c55e; text-align: center; margin-top: 16px; }
-        .btn-success, .btn-danger { width: 100%; padding: 14px; border-radius: 16px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; }
-        .btn-success { background: #22c55e; color: #0f172a; }
-        .btn-success:hover { background: #16a34a; }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-back { display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; color: #a5b4fc; }
+        body { background-color: #0d0e15; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; }
+        .pago-card { background: #1a1a2e; padding: 40px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .header { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; margin-bottom: 25px; border-bottom: 1px solid #2d2d44; padding-bottom: 15px; }
+        .detalle-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; color: #a0a0b5; }
+        .total { font-size: 24px; font-weight: bold; color: #2ecc71; text-align: center; margin: 30px 0; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px; transition: 0.3s; color: white; }
+        .btn-success { background-color: #2ecc71; }
+        .btn-success:hover { background-color: #27ae60; }
+        .btn-danger { background-color: #e74c3c; }
+        .btn-danger:hover { background-color: #c0392b; }
+        .volver { display: block; text-align: center; color: #a0a0b5; text-decoration: none; margin-top: 15px; }
     </style>
 </head>
 <body>
-    <div class="payment-card">
-        <h2><i class="fa-solid fa-credit-card"></i> Resumen de Compra</h2>
-        <div class="summary-box">
-            <h3>Reserva #{{ detalle.id_reserva }}</h3>
-            <div class="summary-item"><span>Evento</span><strong>{{ detalle.nombre_evento }}</strong></div>
-            <div class="summary-item"><span>Asiento</span><strong>{{ detalle.numero_asiento }}</strong></div>
-            <div class="summary-item"><span>Expira</span><strong>{{ detalle.timestamp_expiracion.strftime('%H:%M:%S') }}</strong></div>
-            <div class="total-price">Total: ${{ '%.2f'|format(detalle.precio_base) }}</div>
+
+    <div class="pago-card">
+        <div class="header">
+            <i class="fa-regular fa-credit-card"></i> Resumen de Compra
         </div>
+
+        <div class="detalle-row">
+            <span>Reserva #</span>
+            <span style="color: white; font-weight: bold;">{{ detalle.id_reserva }}</span>
+        </div>
+        <div class="detalle-row">
+            <span>Evento</span>
+            <span style="color: white; font-weight: bold;">{{ detalle.nombre_evento }}</span>
+        </div>
+        <div class="detalle-row">
+            <span>Asiento</span>
+            <span style="color: white; font-weight: bold;">{{ detalle.numero_asiento }}</span>
+        </div>
+
+        <div class="total">
+            Total: ${{ "%.2f"|format(detalle.precio_base) }}
+        </div>
+
+        <!-- Formulario corregido que envía el resultado y el monto -->
         <form action="{{ url_for('pagos_api.procesar', id_reserva=detalle.id_reserva) }}" method="POST">
-            <button type="submit" name="resultado" value="exito" class="btn-success">Simular Pago Exitoso</button>
-            <button type="submit" name="resultado" value="fallo" class="btn-danger">Simular Pago Fallido</button>
+            <input type="hidden" name="monto" value="{{ detalle.precio_base }}">
+            
+            <!-- Botón de éxito envía 'exito' -->
+            <button type="submit" name="resultado" value="exito" class="btn btn-success">
+                Simular Pago Exitoso
+            </button>
+            
+            <!-- Botón de fallo envía 'fallo' -->
+            <button type="submit" name="resultado" value="fallo" class="btn btn-danger">
+                Simular Pago Fallido
+            </button>
         </form>
-        <a href="/dashboard" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver al Dashboard</a>
+
+        <a href="/dashboard" class="volver"><i class="fa-solid fa-arrow-left"></i> Cancelar y Volver</a>
     </div>
+
 </body>
 </html>

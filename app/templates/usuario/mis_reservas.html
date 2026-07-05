@@ -1,0 +1,90 @@
+<!-- app/templates/usuario/mis_reservas.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas - UNEMI Conciertos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { display: flex; background-color: #f4f6f9; min-height: 100vh; }
+        
+        .sidebar { width: 250px; background-color: #1a1a2e; color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #2d2d44; }
+        .sidebar-header i { color: #7b2cbf; }
+        
+        .nav-menu { list-style: none; padding: 20px 0; flex-grow: 1; }
+        .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: #a0a0b5; text-decoration: none; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { background-color: #7b2cbf; color: white; border-radius: 0 25px 25px 0; margin-right: 20px; }
+        
+        .main-content { flex-grow: 1; padding: 40px; }
+        .header { margin-bottom: 30px; }
+        .header h1 { font-size: 28px; color: #333; }
+        .header p { color: #666; margin-top: 5px; }
+
+        /* Tarjetas de las reservas */
+        .reservas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .reserva-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #2ecc71; }
+        .reserva-card h3 { color: #1a1a2e; font-size: 18px; margin-bottom: 15px; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666; }
+        .info-row strong { color: #333; }
+        
+        .btn-comprobante { display: block; text-align: center; background-color: #f8f0ff; color: #7b2cbf; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; transition: 0.3s; }
+        .btn-comprobante:hover { background-color: #7b2cbf; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Menú Lateral -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-ticket"></i> CONCIERTOS
+        </div>
+        <ul class="nav-menu">
+            <a href="/dashboard" class="nav-item"><i class="fa-solid fa-house"></i> Inicio</a>
+            <a href="#" class="nav-item"><i class="fa-regular fa-calendar"></i> Eventos</a>
+            <!-- Este enlace ahora es el activo -->
+            <a href="/dashboard/mis-reservas" class="nav-item active"><i class="fa-solid fa-couch"></i> Mis Reservas</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> Historial</a>
+            <a href="#" class="nav-item"><i class="fa-regular fa-user"></i> Perfil</a>
+        </ul>
+        <a href="{{ url_for('auth.logout') }}" class="nav-item" style="margin-bottom: 20px; color: #ff4d4d;">
+            <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+        </a>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <header class="header">
+            <h1>Mis Reservas 🎟️</h1>
+            <p>Aquí tienes el historial de los asientos que has comprado.</p>
+        </header>
+
+        <div class="reservas-grid">
+            <!-- Bucle para mostrar todas las compras -->
+            {% for reserva in reservas %}
+            <div class="reserva-card">
+                <h3>{{ reserva.nombre_evento }}</h3>
+                <div class="info-row"><span>Asiento:</span> <strong>{{ reserva.numero_asiento }}</strong></div>
+                <div class="info-row"><span>Lugar:</span> <strong>{{ reserva.lugar }}</strong></div>
+                <div class="info-row"><span>Pagado:</span> <strong style="color: #2ecc71;">${{ "%.2f"|format(reserva.monto) }}</strong></div>
+                <div class="info-row"><span>Fecha:</span> <strong>{{ reserva.fecha_pago.strftime('%Y-%m-%d') }}</strong></div>
+                
+                <!-- Botón que redirige a la vista del comprobante -->
+                <a href="/pago/comprobante/{{ reserva.id_reserva }}" class="btn-comprobante">
+                    <i class="fa-solid fa-receipt"></i> Ver Comprobante
+                </a>
+            </div>
+            {% else %}
+            <!-- Si no hay reservas, mostramos este mensaje -->
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888; background: white; border-radius: 12px;">
+                <i class="fa-solid fa-ticket" style="font-size: 40px; color: #ddd; margin-bottom: 15px;"></i>
+                <p>Aún no tienes reservas confirmadas.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+</body>
+</html>

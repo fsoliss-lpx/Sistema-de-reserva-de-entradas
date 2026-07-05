@@ -4,352 +4,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Conciertos</title>
+    <title>Dashboard - UNEMI Conciertos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        :root {
-            --bg: #0d0e15;
-            --surface: #111827;
-            --surface-soft: rgba(255,255,255,0.06);
-            --border: rgba(255,255,255,0.05);
-            --text: #e2e8f0;
-            --muted: #94a3b8;
-            --muted-strong: #cbd5e1;
-            --accent: #8b5cf6;
-            --accent-strong: #a78bfa;
-            --accent-soft: rgba(167,139,250,0.15);
-            --pill-text: #c4b5fd;
-            --danger-soft: rgba(248,113,113,0.14);
-            --button-bg: #111827;
-            --button-border: rgba(255,255,255,0.06);
-            --button-text: #e2e8f0;
-        }
-        body { min-height: 100vh; background: var(--bg); color: var(--text); }
-        body.light { background: #f8fafc; color: #111827; }
-        a { color: inherit; text-decoration: none; }
-        .layout { display: flex; gap: 24px; max-width: 1400px; margin: 0 auto; padding: 28px 20px 40px; }
-        .sidebar { width: 280px; background: var(--surface); border-radius: 28px; padding: 24px; display: flex; flex-direction: column; gap: 28px; border: 1px solid var(--border); }
-        .brand { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-        .brand i { color: var(--accent); }
-        .section-title { color: var(--muted); font-size: 11px; letter-spacing: .25em; text-transform: uppercase; margin-bottom: 12px; }
-        .menu-link { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; color: var(--muted-strong); transition: background .2s ease; }
-        .menu-link:hover { background: var(--surface-soft); color: #f8fafc; }
-        .menu-link.active { background: rgba(139,92,246,0.18); color: #f8fafc; }
-        .menu-link i { width: 18px; text-align: center; }
-        .sidebar-footer a { display: inline-flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 16px; background: var(--danger-soft); color: #fecaca; }
-        .main { flex: 1; display: flex; flex-direction: column; gap: 24px; }
-        .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
-        .welcome-box { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 28px; }
-        .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #c7d2fe; font-size: 12px; text-transform: uppercase; letter-spacing: .25em; margin-bottom: 12px; }
-        .eyebrow i { color: #818cf8; }
-        .heading { font-size: 36px; font-weight: 800; color: #f8fafc; margin-bottom: 10px; }
-        .subtitle { color: var(--muted-strong); line-height: 1.8; }
-        .profile-actions { display: flex; align-items: center; gap: 14px; }
-        .notify, .theme-toggle { width: 52px; min-width: 52px; height: 52px; border-radius: 18px; background: var(--button-bg); display: grid; place-items: center; border: 1px solid var(--button-border); color: var(--button-text); cursor: pointer; }
-        .theme-toggle { min-width: 120px; padding: 0 18px; font-weight: 700; display: inline-flex; justify-content: center; gap: 8px; }
-        .notify:hover, .theme-toggle:hover { background: #1f2937; }
-        .profile-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); }
-        .profile-icon { width: 46px; height: 46px; border-radius: 18px; background: var(--accent); display: grid; place-items: center; font-weight: 800; color: #f8fafc; }
-        .profile-info strong { display: block; font-size: 16px; color: #f8fafc; }
-        .profile-info small { color: var(--muted); }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 26px; }
-        .stat-card strong { display: block; font-size: 34px; color: #f8fafc; margin-bottom: 10px; }
-        .stat-card span { color: var(--muted-strong); font-size: 14px; }
-        .stat-card small { display: block; margin-top: 14px; color: var(--muted); }
-        .dashboard-grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 24px; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 32px; padding: 28px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
-        .card-header h2 { font-size: 22px; color: #f8fafc; }
-        .card-header small { color: var(--muted); }
-        .view-all { color: var(--accent-strong); font-weight: 700; }
-        .event-card { display: grid; grid-template-columns: 92px 1fr; gap: 18px; align-items: center; padding: 18px 0; border-top: 1px solid rgba(255,255,255,0.04); }
-        .event-card:first-child { border-top: 0; }
-        .event-thumb { width: 92px; height: 92px; border-radius: 26px; background: linear-gradient(135deg, #7c3aed, #c084fc); display: grid; place-items: center; color: #fff; font-size: 22px; font-weight: 800; }
-        .event-info h3 { font-size: 18px; color: #f8fafc; margin-bottom: 10px; }
-        .event-info p { color: var(--muted-strong); font-size: 14px; line-height: 1.8; }
-        .event-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-        .pill { background: var(--accent-soft); color: var(--pill-text); padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-        .event-action { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; color: var(--accent-strong); font-size: 13px; font-weight: 700; }
-        .seat-grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 10px; justify-items: center; margin-top: 16px; }
-        .seat-dot { width: 12px; height: 12px; border-radius: 999px; background: #1f2937; border: 1px solid rgba(255,255,255,0.08); }
-        .seat-dot.available { background: #22c55e; }
-        .seat-dot.reserved { background: #f97316; }
-        .seat-dot.sold { background: #ef4444; }
-        .seat-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
-        .legend-item { display: flex; gap: 10px; align-items: center; color: var(--muted-strong); font-size: 14px; }
-        .legend-badge { width: 12px; height: 12px; border-radius: 999px; }
-        .actions-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 20px; }
-        .action-card { display: flex; align-items: center; gap: 16px; padding: 20px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); }
-        .action-card i { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 16px; background: var(--accent-soft); color: var(--pill-text); font-size: 20px; }
-        .action-card strong { font-size: 14px; color: #f8fafc; }
-        .action-card small { color: var(--muted); }
-        .notifications { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-        .notification-card { display: flex; gap: 14px; align-items: flex-start; padding: 22px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); }
-        .notification-card i { font-size: 20px; margin-top: 4px; color: #22c55e; }
-        .notification-content strong { color: #f8fafc; margin-bottom: 6px; display: block; }
-        .notification-content small { color: var(--muted); line-height: 1.7; }
-        body.light { background: #f8fafc; color: #111827; }
-        body.light .sidebar { background: #ffffff; border-color: #e5e7eb; box-shadow: 0 18px 45px rgba(15,23,42,0.06); }
-        body.light .welcome-box,
-        body.light .profile-card,
-        body.light .stat-card,
-        body.light .card,
-        body.light .notification-card,
-        body.light .action-card { background: #ffffff; border-color: #e5e7eb; box-shadow: 0 18px 35px rgba(15,23,42,0.06); }
-        body.light .menu-link { color: #334155; }
-        body.light .menu-link:hover { background: #e0e7ff; color: #1e3a8a; }
-        body.light .menu-link.active { background: #dbeafe; color: #1e3a8a; }
-        body.light .sidebar-footer a { background: rgba(255,238,242,0.85); color: #991b1b; }
-        body.light .section-title { color: #475569; }
-        body.light .subtitle,
-        body.light .profile-info small,
-        body.light .stat-card small,
-        body.light .event-info p,
-        body.light .notification-content small,
-        body.light .legend-item { color: #475569; }
-        body.light .heading,
-        body.light .profile-info strong,
-        body.light .stat-card strong,
-        body.light .event-info h3,
-        body.light .notification-content strong,
-        body.light .action-card strong { color: #111827; }
-        body.light .card-header h2 { color: #111827; }
-        body.light .pill { background: #e0e7ff; color: #3730a3; }
-        body.light .event-action { color: #1d4ed8; }
-        body.light .view-all { color: #1d4ed8; }
-        body.light .notify,
-        body.light .theme-toggle { background: #eef2ff; border-color: #c7d2fe; color: #1d4ed8; }
-        body.light .notify:hover,
-        body.light .theme-toggle:hover { background: #dbeafe; }
-        body.light td { color: #111827; }
-        @media (max-width: 1100px) {
-            .layout { flex-direction: column; padding: 20px 16px 32px; }
-            .sidebar { width: 100%; order: 2; }
-            .main { order: 1; }
-            .topbar { flex-direction: column; align-items: stretch; }
-            .profile-actions { justify-content: space-between; flex-wrap: wrap; }
-            .theme-toggle { width: 100%; }
-            .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .card, .table-card, .action-card, .notification-card, .profile-card, .welcome-box { width: 100%; }
-        }
-        @media (max-width: 700px) {
-            .sidebar { padding: 18px; }
-            .brand { font-size: 18px; }
-            .menu-link { padding: 12px 14px; font-size: 14px; }
-            .topbar { gap: 14px; }
-            .heading { font-size: 28px; }
-            .subtitle { font-size: 14px; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .card-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .event-card { grid-template-columns: 1fr; }
-            .event-thumb { width: 100%; height: 120px; border-radius: 24px; }
-            .seat-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-            .actions-grid { grid-template-columns: 1fr; }
-            .notifications { grid-template-columns: 1fr; }
-            .profile-card { flex-direction: column; align-items: flex-start; }
-        }
+        body { display: flex; background-color: #f4f6f9; min-height: 100vh; }
+        
+        .sidebar { width: 250px; background-color: #1a1a2e; color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #2d2d44; }
+        .sidebar-header i { color: #7b2cbf; }
+        
+        .nav-menu { list-style: none; padding: 20px 0; flex-grow: 1; }
+        .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: #a0a0b5; text-decoration: none; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { background-color: #7b2cbf; color: white; border-radius: 0 25px 25px 0; margin-right: 20px; }
+        
+        .main-content { flex-grow: 1; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .welcome-text h1 { font-size: 28px; color: #333; }
+        .welcome-text p { color: #666; margin-top: 5px; }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid #7b2cbf; }
+        .card h3 { color: #333; font-size: 24px; margin-bottom: 5px; }
+        .card p { color: #888; font-size: 14px; }
     </style>
-    <script>
-        const syncDashboardTheme = () => {
-            const saved = localStorage.getItem('dashboardTheme') || 'dark';
-            document.body.classList.toggle('light', saved === 'light');
-            document.body.classList.toggle('dark', saved !== 'light');
-            const button = document.querySelector('.theme-toggle');
-            if (button) {
-                button.innerHTML = document.body.classList.contains('light')
-                    ? '<i class="fa-solid fa-moon"></i> Dark'
-                    : '<i class="fa-solid fa-sun"></i> Light';
-            }
-        };
-        const toggleDashboardTheme = () => {
-            const next = document.body.classList.contains('light') ? 'dark' : 'light';
-            localStorage.setItem('dashboardTheme', next);
-            syncDashboardTheme();
-        };
-        document.addEventListener('DOMContentLoaded', () => {
-            syncDashboardTheme();
-            const toggle = document.querySelector('.theme-toggle');
-            if (toggle) toggle.addEventListener('click', toggleDashboardTheme);
-        });
-    </script>
 </head>
 <body>
-    <div class="layout">
-        <aside class="sidebar">
-            <div class="brand"><i class="fa-solid fa-ticket"></i> Conciertos</div>
-            <div>
-                <div class="section-title">Usuario</div>
-                <a href="/dashboard" class="menu-link active"><i class="fa-solid fa-house"></i> Dashboard</a>
-                <a href="/dashboard/perfil" class="menu-link"><i class="fa-regular fa-user"></i> Mi Perfil</a>
-                <a href="/dashboard/historial" class="menu-link"><i class="fa-solid fa-clock-rotate-left"></i> Mis Reservas</a>
-            </div>
-            <div>
-                <div class="section-title">Eventos</div>
-                <a href="/dashboard" class="menu-link"><i class="fa-regular fa-calendar"></i> Eventos Disponibles</a>
-                <a href="/dashboard/historial" class="menu-link"><i class="fa-solid fa-list-check"></i> Historial de Eventos</a>
-            </div>
-            {% if session.get('rol') == 'ADMINISTRADOR' %}
-            <div>
-                <div class="section-title">Administración</div>
-                <a href="/admin" class="menu-link"><i class="fa-solid fa-shield-halved"></i> Gestionar Eventos</a>
-                <a href="/admin/asientos" class="menu-link"><i class="fa-solid fa-chair"></i> Gestionar Asientos</a>
-            </div>
-            {% endif %}
-            <div class="sidebar-footer">
-                <a href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
-            </div>
-        </aside>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-ticket"></i> CONCIERTOS
+        </div>
+        <ul class="nav-menu">
+            <!-- Cada enlace ahora apunta a su ruta correspondiente -->
+            <a href="/dashboard" class="nav-item"><i class="fa-solid fa-house"></i> Inicio</a>
+            <a href="/dashboard" class="nav-item"><i class="fa-regular fa-calendar"></i> Eventos</a>
+            <a href="/dashboard/mis-reservas" class="nav-item"><i class="fa-solid fa-couch"></i> Mis Reservas</a>
+            <a href="/dashboard/historial" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i> Historial</a>
+            <a href="/dashboard/perfil" class="nav-item"><i class="fa-regular fa-user"></i> Perfil</a>
+        </ul>
+    </nav>
 
-        <main class="main">
-            <div class="topbar">
-                <div class="welcome-box">
-                    <div class="eyebrow"><i class="fa-solid fa-arrow-trend-up"></i> Dashboard</div>
-                    <h1 class="heading">¡Bienvenido, {{ nombre }}!</h1>
-                    <p class="subtitle">Aquí tienes un resumen de tu actividad y acceso rápido a los próximos eventos.</p>
+    <main class="main-content">
+        <header class="header">
+            <div class="welcome-text">
+                <h1>¡Bienvenido, {{ nombre }}! 👋</h1>
+                <p>Aquí tienes un resumen de tu actividad.</p>
+            </div>
+            <div class="user-profile">
+                <i class="fa-solid fa-bell" style="font-size: 20px; color: #7b2cbf; margin-right: 15px;"></i>
+                <i class="fa-solid fa-circle-user" style="font-size: 32px; color: #333;"></i>
+            </div>
+        </header>
+
+        <section class="cards-grid">
+            <div class="card">
+                <h3>{{ total_reservas }}</h3>
+                <p>Reservas Activas</p>
+            </div>
+            <div class="card">
+                <h3>{{ total_reservas }}</h3>
+                <p>Eventos Asistidos</p>
+            </div>
+            <div class="card">
+                <h3>${{ "%.2f"|format(total_gastado) }}</h3>
+                <p>Total Gastado</p>
+            </div>
+        </section>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 20px;">
+            <h2 style="color: #333; font-size: 22px;">Próximos Eventos</h2>
+            <a href="#" style="color: #7b2cbf; text-decoration: none; font-weight: bold; font-size: 14px;">Ver todos</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;">
+            {% for evento in eventos %}
+            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                <img src="{{ evento.imagen_url or 'https://images.unsplash.com/photo-1540039155732-68746868d22c?q=80&w=800' }}" alt="Concierto" style="width: 100%; height: 180px; object-fit: cover;">
+                <div style="padding: 20px;">
+                    <h3 style="color: #1a1a2e; font-size: 18px; margin-bottom: 12px; font-weight: 700;">{{ evento.nombre_evento }}</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-location-dot" style="color: #7b2cbf; width: 20px;"></i> {{ evento.lugar }}</p>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 20px;"><i class="fa-regular fa-calendar" style="color: #7b2cbf; width: 20px;"></i> {{ evento.fecha_hora.strftime('%d de %b, %Y • %I:%M %p') }}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
+                        <span style="font-weight: 800; font-size: 20px; color: #1a1a2e;">${{ "%.2f"|format(evento.precio_base) }}</span>
+                        <a href="/dashboard/evento/{{ evento.id_evento }}/asientos" style="background-color: #f8f0ff; color: #7b2cbf; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; transition: background 0.3s;">
+                            Ver Asientos <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="profile-actions">
-                    <button class="notify"><i class="fa-solid fa-bell"></i></button>
-                <button type="button" class="theme-toggle"></button>
-                    <div class="profile-card">
-                        <div class="profile-icon">{{ nombre[0]|upper }}</div>
-                        <div class="profile-info">
-                            <strong>{{ nombre }}</strong>
-                            <small>Miembro activo</small>
-                        </div>
-                    </div>
-                </div>
             </div>
-
-            <section class="stats-grid">
-                <article class="stat-card">
-                    <strong>{{ reservas_activas }}</strong>
-                    <span>Reservas Activas</span>
-                    <small>Controla las reservas que aún no se han completado.</small>
-                </article>
-                <article class="stat-card">
-                    <strong>{{ eventos_asistidos }}</strong>
-                    <span>Eventos Asistidos</span>
-                    <small>Eventos confirmados en tu historial.</small>
-                </article>
-                <article class="stat-card">
-                    <strong>{{ asientos_reservados }}</strong>
-                    <span>Asientos Reservados</span>
-                    <small>Asientos que has reservado o están en proceso.</small>
-                </article>
-                <article class="stat-card">
-                    <strong>${{ '%.2f' | format(total_gastado) }}</strong>
-                    <span>Total Gastado</span>
-                    <small>Monto total pagado por tus reservas.</small>
-                </article>
-            </section>
-
-            <div class="dashboard-grid">
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Próximos Eventos</h2>
-                            <small>Eventos disponibles para reservar.</small>
-                        </div>
-                        <a href="/dashboard" class="view-all">Ver todos</a>
-                    </div>
-                    {% if eventos %}
-                        {% for evento in eventos[:3] %}
-                        <article class="event-card">
-                            <div class="event-thumb">{{ evento.nombre_evento[:2] | upper }}</div>
-                            <div class="event-info">
-                                <div style="display:flex; gap:8px; flex-wrap: wrap; margin-bottom:10px;">
-                                    <span class="pill">{{ evento.estado }}</span>
-                                    <span class="pill">${{ '%.2f'|format(evento.precio_base) }}</span>
-                                </div>
-                                <h3>{{ evento.nombre_evento }}</h3>
-                                <p><i class="fa-solid fa-location-dot"></i> {{ evento.lugar }}</p>
-                                <p><i class="fa-regular fa-calendar"></i> {{ evento.fecha_hora.strftime('%d %b, %Y • %I:%M %p') }}</p>
-                                <div class="event-meta">
-                                    <span class="pill">Evento</span>
-                                    <a class="event-action" href="/dashboard/evento/{{ evento.id_evento }}/asientos">Ver Asientos</a>
-                                </div>
-                            </div>
-                        </article>
-                        {% endfor %}
-                    {% else %}
-                        <p style="color:#94a3b8; padding: 18px 0;">No hay eventos disponibles por el momento.</p>
-                    {% endif %}
-                </section>
-
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Vista Rápida de Asientos</h2>
-                            <small>Resumen de disponibilidad.</small>
-                        </div>
-                        {% if eventos %}
-                        <a href="/dashboard/evento/{{ eventos[0].id_evento }}/asientos" class="view-all">Ver mapa completo</a>
-                        {% endif %}
-                    </div>
-                    <div class="seat-grid">
-                        {% for i in range(40) %}
-                            <div class="seat-dot {{ ['available','reserved','sold'][i % 3] }}"></div>
-                        {% endfor %}
-                    </div>
-                    <div class="seat-legend">
-                        <div class="legend-item"><span class="legend-badge available"></span> Disponible</div>
-                        <div class="legend-item"><span class="legend-badge reserved"></span> Seleccionado</div>
-                        <div class="legend-item"><span class="legend-badge sold"></span> Ocupado</div>
-                    </div>
-                </section>
-            </div>
-
-            <section class="actions-grid">
-                <article class="action-card">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <div>
-                        <strong>Buscar Eventos</strong>
-                        <small>Explora los conciertos disponibles.</small>
-                    </div>
-                </article>
-                <article class="action-card">
-                    <i class="fa-solid fa-ticket-simple"></i>
-                    <div>
-                        <strong>Mis Reservas</strong>
-                        <small>Revisa tus tickets y estados.</small>
-                    </div>
-                </article>
-                <article class="action-card">
-                    <i class="fa-solid fa-user-pen"></i>
-                    <div>
-                        <strong>Perfil</strong>
-                        <small>Actualiza tu información personal.</small>
-                    </div>
-                </article>
-            </section>
-
-            <section class="notifications">
-                <article class="notification-card">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <div class="notification-content">
-                        <strong>Pago confirmado</strong>
-                        <small>Tu pago fue procesado exitosamente.</small>
-                    </div>
-                </article>
-                <article class="notification-card">
-                    <i class="fa-solid fa-ticket"></i>
-                    <div class="notification-content">
-                        <strong>Reserva confirmada</strong>
-                        <small>Tu asiento ha sido reservado correctamente.</small>
-                    </div>
-                </article>
-                <article class="notification-card">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <div class="notification-content">
-                        <strong>Evento próximo</strong>
-                        <small>Revisa tus eventos más cercanos.</small>
-                    </div>
-                </article>
-            </section>
-        </main>
-    </div>
+            {% endfor %}
+        </div>
+    </main>
 </body>
 </html>
