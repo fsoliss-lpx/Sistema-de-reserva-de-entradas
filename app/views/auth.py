@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.models.usuario_model import UsuarioModel
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -18,31 +18,30 @@ def register():
 
     return render_template('auth/registro.html')
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        correo = request.form.get('correo')
-        contrasena = request.form.get('contrasena')
-
-        usuario = UsuarioModel.verificar_login(correo, contrasena)
-        
-        if usuario:
-            # Guardamos datos en la sesión[cite: 5]
-            session['usuario_id'] = usuario['id_usuario']
-            session['rol'] = usuario['rol']
-            session['nombre'] = usuario['nombre_completo']
-            
-            # Redirección según el rol (Para el Sprint 2 y 8)
-            if usuario['rol'] == 'ADMINISTRADOR':
-                return redirect('/admin') # Ruta futura del admin
-            else:
-                return redirect('/dashboard') # Ruta futura del usuario
-        else:
-            flash('Correo o contraseña incorrectos.', 'danger')
-
+# 1. Ruta para ver el formulario (GET)
+@auth_bp.route('/login', methods=['GET'])
+def login_page():
     return render_template('auth/login.html')
+
+# 2. Ruta para procesar el formulario (POST)
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    correo = request.form.get('correo')
+    contrasena = request.form.get('contrasena')
+
+    usuario = UsuarioModel.verificar_login(correo, contrasena)
+    
+    if usuario:
+        session['usuario_id'] = usuario['id_usuario']
+        session['rol'] = usuario['rol']
+        session['nombre'] = usuario['nombre_completo']
+        return redirect(url_for('user.inicio')) # Redirige al dashboard
+    else:
+        flash('Credenciales incorrectas', 'danger')
+        return redirect(url_for('auth.login_page'))
 
 @auth_bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('auth.login'))
+    flash('Has cerrado sesión correctamente.', 'success')
+    return redirect(url_for('auth.login_page'))

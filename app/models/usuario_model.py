@@ -71,3 +71,55 @@ class UsuarioModel:
                 return cursor.fetchone()
         finally:
             conexion.close()
+
+    @staticmethod
+    def obtener_usuarios():
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = "SELECT id_usuario, nombre_completo, correo_electronico, rol FROM usuarios"
+                cursor.execute(sql)
+                return cursor.fetchall()
+        finally:
+            conexion.close()
+
+    @staticmethod
+    def obtener_usuario_por_id(id_usuario):
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = "SELECT id_usuario, nombre_completo, correo_electronico, rol FROM usuarios WHERE id_usuario = %s"
+                cursor.execute(sql, (id_usuario,))
+                return cursor.fetchone()
+        finally:
+            conexion.close()
+
+    @staticmethod
+    def eliminar_usuario(id_usuario):
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = "DELETE FROM usuarios WHERE id_usuario = %s"
+                cursor.execute(sql, (id_usuario,))
+            conexion.commit()
+            return True
+        except Exception as e:
+            print(f"Error al eliminar usuario: {e}")
+            return False
+        finally:
+            conexion.close()
+
+    @staticmethod
+    def actualizar_usuario(id_usuario, nombre_completo, correo_electronico, rol):
+        conexion = get_db_connection()
+        try:
+            with conexion.cursor() as cursor:
+                sql = "UPDATE usuarios SET nombre_completo = %s, correo_electronico = %s, rol = %s WHERE id_usuario = %s"
+                cursor.execute(sql, (nombre_completo, correo_electronico, rol, id_usuario))
+            conexion.commit()
+            return True
+        except Exception as e:
+            print(f"Error al actualizar usuario: {e}")
+            return False
+        finally:
+            conexion.close()

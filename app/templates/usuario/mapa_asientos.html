@@ -8,98 +8,65 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f4f6f9; display: flex; justify-content: center; padding: 40px; }
-        
-        .map-container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 800px; text-align: center; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .btn-back { text-decoration: none; color: #666; font-weight: bold; transition: 0.3s; }
-        .btn-back:hover { color: #7b2cbf; }
-
-        .escenario { background-color: #1a1a2e; color: white; padding: 15px; border-radius: 0 0 50% 50%; margin-bottom: 50px; font-weight: bold; letter-spacing: 5px; box-shadow: 0 10px 20px rgba(26, 26, 46, 0.2); }
-
-        /* Cuadrícula del mapa (Ahora configurada para 6 columnas) */
-        .asientos-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; max-width: 550px; margin: 0 auto; }
-        
-        /* Estilo base de los asientos (Letra blanca por defecto para contrastar) */
-        .asiento { padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; justify-content: center; align-items: center; color: white; }
-        
-        /* COLORES INTENSOS */
-        .DISPONIBLE { background-color: #4CAF50; box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3); }
-        .DISPONIBLE:hover { background-color: #388E3C; transform: scale(1.08); box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4); }
-        
-        .RESERVADO_TEMPORAL { background-color: #FF9800; cursor: not-allowed; box-shadow: 0 4px 6px rgba(255, 152, 0, 0.3); }
-        .VENDIDO { background-color: #F44336; cursor: not-allowed; box-shadow: 0 4px 6px rgba(244, 67, 54, 0.3); }
-
-        /* Leyenda de colores */
-        .leyenda { display: flex; justify-content: center; gap: 25px; margin-top: 40px; font-size: 15px; font-weight: bold; color: #333; }
-        .leyenda-item { display: flex; align-items: center; gap: 8px; }
-        .box { width: 22px; height: 22px; border-radius: 5px; }
+        body { background: #0d0e15; color: #e2e8f0; display: flex; justify-content: center; padding: 28px; }
+        .map-container { width: 100%; max-width: 900px; background: #111827; border-radius: 28px; border: 1px solid rgba(255,255,255,0.06); padding: 32px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .btn-back { display: inline-flex; align-items: center; gap: 10px; color: #a5b4fc; }
+        .btn-back:hover { color: #f8fafc; }
+        .header h2 { color: #f8fafc; font-size: 28px; }
+        .escenario { background: #0f172a; padding: 18px 20px; border-radius: 24px; text-align: center; color: #c7d2fe; letter-spacing: 4px; margin-bottom: 32px; }
+        .asientos-grid { display: grid; grid-template-columns: repeat({{ cols }}, minmax(0, 1fr)); gap: 14px; justify-items: center; }
+        .asiento { width: 100%; padding: 14px 0; border-radius: 16px; font-weight: 700; text-align: center; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+        .asiento:hover { transform: translateY(-1px); }
+        .DISPONIBLE { background: #22c55e; color: white; box-shadow: 0 10px 25px rgba(34,197,94,0.18); }
+        .RESERVADO_TEMPORAL { background: #f97316; color: white; cursor: not-allowed; }
+        .VENDIDO { background: #ef4444; color: white; cursor: not-allowed; }
+        .leyenda { display: flex; justify-content: center; gap: 24px; margin-top: 30px; flex-wrap: wrap; }
+        .leyenda-item { display: flex; align-items: center; gap: 10px; color: #cbd5e1; }
+        .box { width: 16px; height: 16px; border-radius: 6px; }
     </style>
 </head>
 <body>
-
     <div class="map-container">
         <div class="header">
             <a href="/dashboard" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver a Eventos</a>
             <h2>Selecciona tu Asiento</h2>
         </div>
-
         <div class="escenario">ESCENARIO</div>
-
-        <div class="asientos-grid">
+        <div class="asientos-grid" style="grid-template-columns: repeat({{ cols }}, minmax(0, 1fr));">
             {% for asiento in asientos %}
-                <!-- Mostramos el estado como clase CSS para pintarlo -->
-                <div class="asiento {{ asiento.estado }}" 
-                     onclick="seleccionarAsiento('{{ asiento.id_asiento }}', '{{ asiento.numero_asiento }}', '{{ asiento.estado }}')">
-                    {{ asiento.numero_asiento }}
-                </div>
+            <div class="asiento {{ asiento.estado }}" onclick="seleccionarAsiento('{{ asiento.id_asiento }}', '{{ asiento.numero_asiento }}', '{{ asiento.estado }}')">{{ asiento.numero_asiento }}</div>
             {% endfor %}
         </div>
-
         <div class="leyenda">
-            <div class="leyenda-item"><div class="box" style="background: #4CAF50;"></div> Disponible</div>
-            <div class="leyenda-item"><div class="box" style="background: #FF9800;"></div> En Proceso</div>
-            <div class="leyenda-item"><div class="box" style="background: #F44336;"></div> Ocupado</div>
+            <div class="leyenda-item"><span class="box" style="background: #22c55e;"></span> Disponible</div>
+            <div class="leyenda-item"><span class="box" style="background: #f97316;"></span> En Proceso</div>
+            <div class="leyenda-item"><span class="box" style="background: #ef4444;"></span> Ocupado</div>
         </div>
     </div>
-
     <script>
         function seleccionarAsiento(id, numero, estado) {
-            // Si el asiento no está verde, no hacemos nada
             if (estado !== 'DISPONIBLE') {
                 alert('Este asiento ya no está disponible.');
                 return;
             }
-            
             if (confirm('¿Deseas intentar reservar el asiento ' + numero + '?')) {
-                // Hacemos la petición POST asíncrona a nuestra API
-                fetch('/api/reservar/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id_asiento: id })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // AQUÍ ESTÁ EL CAMBIO: Redirige automáticamente a la pantalla de pagos
-                        window.location.href = '/pago/' + data.id_reserva; 
-                    } else {
-                        // Si alguien más nos ganó el asiento
-                        alert("Error: " + data.message);
-                        window.location.reload(); 
-                    }
-                })
-                .catch(error => {
-                    console.error("Error en la solicitud:", error);
-                    alert("Ocurrió un error de conexión al intentar reservar.");
-                });
+                fetch('/api/reservar/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_asiento: id }) })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            window.location.href = '/pago/' + data.id_reserva;
+                        } else {
+                            alert('Error: ' + data.message);
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        alert('Ocurrió un error de conexión al intentar reservar.');
+                    });
             }
         }
     </script>
-
-
 </body>
 </html>

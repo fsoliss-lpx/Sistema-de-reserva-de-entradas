@@ -1,0 +1,53 @@
+body {
+    /* 1. Fondo de pantalla */
+    background-image: url('../img/concierto-1.png'); /* Ruta a tu imagen */
+    background-size: cover; /* Cubre toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* No se repite */
+    background-attachment: fixed; /* Fija el fondo al hacer scroll */
+    
+    /* 2. Centrado del contenido (crucial) */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    min-height: 100vh; /* Ocupa toda la altura visible */
+    margin: 0; /* Elimina márgenes por defecto */
+    
+    /* 3. Estilos de texto globales (para que el título se vea bien) */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white; /* Color de texto general */
+}
+
+.login-box {
+    background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco con 95% de opacidad */
+    padding: 40px;
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Sombra suave */
+    width: 100%;
+    max-width: 400px; /* Ancho máximo del formulario */
+}
+
+/* app/static/css/style.css */
+
+.form-group {
+    width: 100%; /* Asegura que cada campo ocupe todo el ancho */
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%; /* El campo de texto ocupa todo el ancho */
+    padding: 12px;
+    box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-login {
+    width: 100%; /* El botón ocupa todo el ancho */
+    padding: 12px;
+    background-color: #7b2cbf;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

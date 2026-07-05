@@ -10,20 +10,46 @@ user_bp = Blueprint('user', __name__, url_prefix='/dashboard')
 def inicio():
     if 'usuario_id' not in session:
         return redirect(url_for('auth.login'))
-    
-    if session.get('rol') == 'ADMINISTRADOR':
-        return redirect('/admin') 
 
     nombre_usuario = session.get('nombre', 'Usuario')
     lista_eventos = EventoModel.obtener_eventos_activos()
-    return render_template('usuario/dashboard.html', nombre=nombre_usuario, eventos=lista_eventos)
+    historial = ReservaModel.obtener_historial_usuario(session['usuario_id']) or []
+
+    reservas_activas = sum(1 for r in historial if r.get('estado_reserva') == 'TEMPORAL')
+    eventos_asistidos = sum(1 for r in historial if r.get('estado_reserva') == 'CONFIRMADA')
+    asientos_reservados = sum(1 for r in historial if r.get('estado_reserva') in ('TEMPORAL', 'CONFIRMADA'))
+    total_gastado = sum(float(r.get('monto') or 0) for r in historial)
+
+    return render_template(
+        'usuario/dashboard.html',
+        nombre=nombre_usuario,
+        eventos=lista_eventos,
+        reservas_activas=reservas_activas,
+        eventos_asistidos=eventos_asistidos,
+        asientos_reservados=asientos_reservados,
+        total_gastado=total_gastado,
+        historial=historial
+    )
 
 @user_bp.route('/evento/<int:id_evento>/asientos')
 def mapa_asientos(id_evento):
     if 'usuario_id' not in session:
         return redirect(url_for('auth.login'))
-    asientos = AsientoModel.obtener_asientos_por_evento(id_evento)
-    return render_template('usuario/mapa_asientos.html', asientos=asientos, id_evento=id_evento)
+    asientos = AsientoModel.obtener_asientos_por_evento(id_evento) or []
+    # calcular columnas (máximo número encontrado en etiquetas A1, B1...)
+    cols = 6
+    try:
+        nums = []
+        for a in asientos:
+            label = a.get('numero_asiento','')
+            # extraer parte numérica
+            num = ''.join(ch for ch in label if ch.isdigit())
+            if num:
+                nums.append(int(num))
+        cols = max(nums) if nums else 6
+    except Exception:
+        cols = 6
+    return render_template('usuario/mapa_asientos.html', asientos=asientos, id_evento=id_evento, cols=cols)
 
 @user_bp.route('/historial')
 def historial():
