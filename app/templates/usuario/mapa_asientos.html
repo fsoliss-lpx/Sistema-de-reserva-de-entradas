@@ -73,7 +73,7 @@
             }
             
             if (confirm('¿Deseas intentar reservar el asiento ' + numero + '?')) {
-                // Hacemos la petición POST asíncrona a nuestra nueva API
+                // Hacemos la petición POST asíncrona a nuestra API
                 fetch('/api/reservar/', {
                     method: 'POST',
                     headers: {
@@ -84,16 +84,12 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // Si ganamos la carrera, mostramos el éxito
-                        alert(data.message);
-                        
-                        // Recargamos la página para que el asiento se pinte de Naranja (Reservado)
-                        // En el Sprint 6 cambiaremos esto para que redirija a la pantalla de Pago
-                        window.location.reload(); 
+                        // AQUÍ ESTÁ EL CAMBIO: Redirige automáticamente a la pantalla de pagos
+                        window.location.href = '/pago/' + data.id_reserva; 
                     } else {
-                        // Si alguien más nos ganó el asiento (Condición de Carrera - Error 409)
+                        // Si alguien más nos ganó el asiento
                         alert("Error: " + data.message);
-                        window.location.reload(); // Recargamos para actualizar los colores reales
+                        window.location.reload(); 
                     }
                 })
                 .catch(error => {
@@ -103,6 +99,7 @@
             }
         }
     </script>
+
 
 </body>
 </html>

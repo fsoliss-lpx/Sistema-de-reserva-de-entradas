@@ -34,4 +34,8 @@ def create_app():
     from app.controllers.reservas_api import reservas_bp
     app.register_blueprint(reservas_bp)
 
+    # Registrar la API de Pagos
+    from app.controllers.pagos_api import pagos_bp
+    app.register_blueprint(pagos_bp)
+
     return app
